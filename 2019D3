@@ -1,0 +1,53 @@
+#harmadik feladat
+
+#megnyitom és egy listában elhelyezem
+with open('adventofcode2019_input3.txt', 'r') as f:
+    input = f.read().split('\n')
+f.close()
+A_wire = input[0].split(',')
+B_wire = input[1].split(',')
+
+#két koordináta dict, az első koordináta a jobb/bal, a második a fel/le, ezeken iterálok majd
+#annyiszor, ahány ismétlést ír az adott lépés
+DX = {'L': -1, 'R': 1, 'U': 0, 'D': 0}
+DY = {'L': 0, 'R': 0, 'U': 1, 'D': -1}
+
+#ez a bemeneti lista elemein végig iterál és a fenti két dict segítségével egy újabb key/value párt hoz létre
+#melynek a key-je az aktuális koordináta, a value pedig az összes addig megtett lépés
+#így a vonalak minden egyes koordinátáját ismerni fogom
+#a lépéseket a második feladathoz kell beépíteni, mert ott van szükség a megtett útra
+def coordinates(inp):
+    x = 0
+    y = 0
+    distance = 0
+    solution_dict = {}
+    for i in inp:
+        cmd = i[0]
+        steps = int(i[1:])
+        for ii in range(steps):
+            x += DX[cmd]
+            y += DY[cmd]
+            distance += 1
+            if (x,y) not in solution_dict:
+                solution_dict[(x,y)] = distance
+    return solution_dict
+
+#a két megkapott vonal koordinátái között megvizsgálja a közöseket és azokból egy listát épít,
+#minek az elemei a koordináták abszolút értékeiből számolt összegek, azaz a középpontól vett távolságuk a kereszteződéseknek
+A_wire_line = coordinates(A_wire)
+B_wire_line = coordinates(B_wire)
+intersections = []
+for i in A_wire_line:
+    if i in B_wire_line:
+        intersections.append((abs(i[0]) + abs(i[1])))
+min(intersections)
+
+#csinálok egy dictet, ami a találkozásokat tartalmazza csak és a key-k a koordináták, a valuek pedig a két vonal
+#addig megtett távolságának az összege
+intersections_dict = {}
+for i in A_wire_line:
+    if i in B_wire_line:
+        intersections_dict[i] = A_wire_line[i] + B_wire_line[i]
+min(intersections_dict.values())
+
+#vége a harmadik feladatnak
